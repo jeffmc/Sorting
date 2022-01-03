@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 
-	public static final String filePath = "input4.txt";
+	public static final String filePath = "input2.txt";
 	
 	public static void main(String[] args) {
 		try {
@@ -17,15 +18,24 @@ public class Main {
 			start = System.nanoTime();
 			int[] arr = arrayFromCSVFile(new File(filePath));
 			end = System.nanoTime();
-			System.out.println("Loading took " + (end-start)/1000000.0f + " ms.");
-			System.out.println("Loaded:");
-			print(arr);
+			System.out.println("Loading took " + (end-start) / 1000000.0f + " ms.");
+			System.out.println("Loaded: " + arr.length + " elements.");
 			
 			// Bubble
-//			test(new BubbleSort(), arr);
+			int[] bubble = test(new BubbleSort(), arr);
 			
 			// Selection 
-			test(new SelectionSort(), arr);
+			int[] selection = test(new SelectionSort(), arr);
+			System.err.println("Bubble and Selection " + (Arrays.equals(bubble, selection)?"are":"AREN'T") + " equal.");
+			
+			// Counting/Table
+			int[] counting = test(new CountingSort(), arr);
+			System.err.println("Selection and Counting " + (Arrays.equals(selection, counting)?"are":"AREN'T") + " equal.");
+			
+			int[] quick = test(new QuickSort(), arr);
+			System.err.println("Counting and Quick" + (Arrays.equals(counting, quick)?"are":"AREN'T") + " equal.");
+			
+			System.in.read();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -33,7 +43,7 @@ public class Main {
 		
 	}
 	
-	public static void test(SortMethod sm, int[] arr) throws Exception {
+	public static int[] test(SortMethod sm, int[] arr) throws Exception {
 		int[] newArr = arr.clone();
 		SortThread thr = new SortThread(sm, newArr);
 		
@@ -50,13 +60,15 @@ public class Main {
 		System.out.println(sm.getClass().getSimpleName() + " took " + thr.elapsedMs() + "ms");
 		
 		if (!validateSort(newArr)) throw new Exception("Not sorted!");
+		
+		return newArr;
 	}
 	
 	public static void print(int[] arr) {
-//		for (int i : arr)
-//			System.out.print(i + ",");
-//		System.out.print("\n");
 		System.out.println(arr.length + " elements");
+		for (int i : arr)
+			System.out.print(String.valueOf(i) + ",");
+		System.out.print("\n");
 	}
 	
 	public static boolean validateSort(int[] arr) {
