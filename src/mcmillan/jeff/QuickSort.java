@@ -1,9 +1,5 @@
 package mcmillan.jeff;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class QuickSort extends SortMethod {
 
 	public static final String name = "Quicksort";
@@ -13,7 +9,7 @@ public class QuickSort extends SortMethod {
 	public String getName() { return name; }
 
 	@Override
-	public float progress() { return progress; }
+	public float progress() { return progress; } // TODO: Implement progress for quicksort.
 
 	@Override
 	public void sort(int[] arr) {
@@ -21,27 +17,20 @@ public class QuickSort extends SortMethod {
 		
 //		Sorting the entire array is accomplished by quicksort(A, 0, length(A) - 1).
 
-		ArrayList<Region> regions = new ArrayList<Region>();
+		quicksort(arr, 0, arr.length-1);
+		progress = 1f;
 		
-		regions.add(new Region(0, arr.length-1)); // TODO: FIX THIS!
-
-		while (regions.size() > 0) {
-			Region r = regions.remove(0);
-			int lo = r.lo;
-			int hi = r.hi;
-
-			if (lo >= hi || lo < 0) continue;
-			
-			int p = partition(arr, lo, hi);
-			
-			System.out.println("Pivot: " + p);
-			
-			regions.add(new Region(lo, p - 1));
-			regions.add(new Region(p + 1, hi));
-		}
+	}
+	
+	private void quicksort(int[] arr, int lo, int hi) {
+		if (lo >= hi || lo < 0) return;
 		
+		progress = 1.0f-((hi - lo) / (float)arr.length); // TODO: Fix this progress equation
 		
+		int p = partition(arr, lo, hi);
 		
+		quicksort(arr, lo, p - 1);
+		quicksort(arr, p + 1, hi);
 	}
 	
 //		// Sorts a (portion of an) array, divides it into partitions, then sorts those
@@ -82,25 +71,15 @@ public class QuickSort extends SortMethod {
 		
 		int i = lo - 1; // Temp pivot idx
 		
-		for (int j = lo; j<=hi; j++) {
+		for (int j = lo; j<hi; j++) {
 			if (arr[j]<=pivot) {
 				i++;
 				swap(arr, i, j);
 			}
 		}
 		i++;
-		if (i>=arr.length) i = arr.length - 1; // Index cap
 		swap(arr,i,hi);
 		return i;
-	}
-	
-	class Region {
-		int lo, hi;
-		
-		Region(int l, int h) {
-			lo = l;
-			hi = h;
-		}
 	}
 	
 }
