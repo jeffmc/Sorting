@@ -10,6 +10,9 @@ import java.util.Scanner;
 // Entry point for this sorting project. 
 // This program takes input from user on which dataset to sort, and which method to use.
 // It contains implementations of Bubble sort, Selection sort, Table/Counting sort, and Quicksort.
+// It reports progress of the sort to user and writes the sorted data to a file, along with metrics.
+
+// (Datasets of 100, 10017, 100005, 1000069 non-negative integers.)
 
 public class Main {
 
