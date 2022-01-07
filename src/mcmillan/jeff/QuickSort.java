@@ -1,5 +1,6 @@
 package mcmillan.jeff;
 
+// Implementation of Quicksort, as seen here https://en.wikipedia.org/wiki/Quicksort
 public class QuickSort extends SortMethod {
 
 	public static final String name = "Quicksort";
@@ -11,24 +12,25 @@ public class QuickSort extends SortMethod {
 	@Override
 	public float progress() { return progress; } // TODO: Implement progress for quicksort.
 
-	@Override
+	@Override // Implemented the Lomuto partition scheme here.
 	public void sort(int[] arr) {
 //		https://en.wikipedia.org/wiki/Quicksort#Lomuto_partition_scheme
 		
 //		Sorting the entire array is accomplished by quicksort(A, 0, length(A) - 1).
 
-		quicksort(arr, 0, arr.length-1);
-		progress = 1f;
+		quicksort(arr, 0, arr.length-1); // Start with a partition that contains the entire array.
+		progress = 1f; // Set progress to 100% when done.
 		
 	}
 	
 	private void quicksort(int[] arr, int lo, int hi) {
-		if (lo >= hi || lo < 0) return;
+		if (lo >= hi || lo < 0) return; // if lo is higher than hi, stop this partition from being further sorted.
 		
 		progress = 1.0f-((hi - lo) / (float)arr.length); // TODO: Fix this progress equation
 		
-		int p = partition(arr, lo, hi);
+		int p = partition(arr, lo, hi); // Find pivot for partition.
 		
+		// Sort halves independently (exclude pivot)
 		quicksort(arr, lo, p - 1);
 		quicksort(arr, p + 1, hi);
 	}
@@ -46,6 +48,7 @@ public class QuickSort extends SortMethod {
 //		  quicksort(A, lo, p - 1) // Left side of pivot
 //		  quicksort(A, p + 1, hi) // Right side of pivot
 
+	// Returns a pivot index within the specified partition of the array.
 	private int partition(int[] arr, int lo, int hi) {
 //		// Divides array into two partitions
 //		algorithm partition(A, lo, hi) is 
@@ -71,7 +74,7 @@ public class QuickSort extends SortMethod {
 		
 		int i = lo - 1; // Temp pivot idx
 		
-		for (int j = lo; j<hi; j++) {
+		for (int j = lo; j<hi; j++) { // Iterate over range
 			if (arr[j]<=pivot) {
 				i++;
 				swap(arr, i, j);

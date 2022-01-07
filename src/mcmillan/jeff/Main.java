@@ -7,44 +7,49 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// Entry point for this sorting project. 
+// This program takes input from user on which dataset to sort, and which method to use.
+// It contains implementations of Bubble sort, Selection sort, Table/Counting sort, and Quicksort.
+
 public class Main {
 
 	public static Scanner console = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		try {
-			long start,end;
 			
-			// Loading
-			
+			// Load input file
 			File chosenFile = chooseFile();
-			
-			start = System.nanoTime();
+			long start = System.nanoTime();
 			int[] inArr = arrayFromCSVFile(chosenFile);
-			
-			end = System.nanoTime();
+			long end = System.nanoTime();
 			System.out.println("Loading took " + (end-start) / 1000000 + " ms.");
 			System.out.println("Loaded " + inArr.length + " integers.");
 
+			// Choose sort method.
 			SortMethod chosenMethod = chooseSortMethod();
 			
+			// Close console input
 			console.close();
 			console = null;
 			
+			// Run sort and record results.
 			SortResults results = runMonitoredSort(chosenMethod, inArr);
 			int[] outArr = results.arr;
 			
+			// Create results header
 			String header = chosenMethod.getName() + ", took " + results.elapsedMs + "ms, sorted " + outArr.length + " integers."; 
 			
+			// Print results to console.
 			System.out.println("\n" + header + "\n");
 			
+			// Output results (metrics & sorted data) to a file.
 			File out = new File("sortedOutput.txt");
 			if (writeArrayToCSV(outArr, out, header)) {
 				System.out.println("Wrote to '" + out.getName() +"'!");
 			} else {
 				System.err.println("Didn't write to file!");
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,23 +118,28 @@ public class Main {
 		}
 		System.out.println(sm.getClass().getSimpleName() + " took " + thr.elapsedMs() + "ms");
 		
-		if (validateSort(cloneArr)) {
+		boolean validated = validateSort(cloneArr);
+		if (validated) {
 			System.out.println("Successfully sorted!");
 		} else {
 			throw new Exception("Not sorted!");
 		}
-		
-		return new SortResults(thr.elapsedMs(), cloneArr);
+
+		return new SortResults(thr.elapsedMs(), cloneArr, validated);
 	}
-	
-	public static class SortResults {
+
+	// Meant to be returned by runMonitoredSort and holds data about the sort process after completion.
+	static class SortResults {
 		public int elapsedMs;
 		public int[] arr;
-		SortResults(int elapsedMs, int[] arr) {
+		public boolean validated;
+		SortResults(int elapsedMs, int[] arr, boolean validated) {
 			this.elapsedMs = elapsedMs;
 			this.arr = arr;
+			this.validated = validated;
 		}
 	}
+	
 	
 	// Print contents of an integer array.
 	public static void print(int[] arr) {
@@ -175,6 +185,7 @@ public class Main {
 		fr.read(cbuf);
 		String currString = String.valueOf(cbuf);
 		
+		// TODO: Consider simplifying using a simply a string rather than this char[] system.
 		boolean finished = false;
 		while (!finished) {
 			String[] segments = currString.split(",");
